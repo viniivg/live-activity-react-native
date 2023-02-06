@@ -20,7 +20,11 @@ function App(): JSX.Element {
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => LiveActivityModule.updateNotification()}>
+        onPress={() => {
+          setTimeout(() => {
+            LiveActivityModule.updateNotification();
+          }, 3000);
+        }}>
         <Text style={styles.text}>Atualizar Live Activity</Text>
       </TouchableOpacity>
 
