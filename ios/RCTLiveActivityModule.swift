@@ -11,11 +11,11 @@ import Foundation
 @objc(RCTLiveActivityModule)
 class RCTLiveActivityModule: NSObject {
   
-  @objc
-  func startNotification() {
+  @objc(startNotification:withOrder:withStatus:withDescription:withStep:withStepMesage:withImageStep:)
+  func startNotification(_ restaurant: String, _ order: String, _ status: String, _ description: String, _ step: CGFloat, _ stepMesage: String, _ imageStep: String) {
     let initialContentSate = NotificationAttributes.ContentState(mesage: "Hello Word startNotification!")
-    let activityAttributes = NotificationAttributes(title: "My title")
-    
+    let activityAttributes = NotificationAttributes(restaurant: restaurant, order: order, status: status, description: description, step: step, stepMesage: stepMesage, imageStep: imageStep)
+
     do {
       if #available(iOS 16.1, *){
         _ = try Activity.request(attributes: activityAttributes, contentState: initialContentSate)

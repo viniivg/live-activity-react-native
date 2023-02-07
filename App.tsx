@@ -14,7 +14,17 @@ function App(): JSX.Element {
     <SafeAreaView style={styles.container}>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => LiveActivityModule.startNotification()}>
+        onPress={() =>
+          LiveActivityModule.startNotification(
+            'Burgão do Zé',
+            '#02564',
+            'Estamos preparando seu pedido.',
+            'Em até 30 minutos seu pedido sai para entrega',
+            2,
+            'Já pingou aqui!',
+            'cooking',
+          )
+        }>
         <Text style={styles.text}>Iniciar Live Activity</Text>
       </TouchableOpacity>
 

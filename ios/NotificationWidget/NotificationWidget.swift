@@ -44,36 +44,30 @@ struct NotificationWidgets: WidgetBundle {
 
 struct ProgressBar: View {
   var step: CGFloat = 1
-  var dark: Bool = true
-  var width1: CGFloat = 80
-  var width2: CGFloat = 160
-  var width3: CGFloat = 60
-  var heght: CGFloat = 5
+  var dark: Bool = false
   
 
   var body: some View {
     let activitieColor =  Color(hexStringToUIColor(hex: "#48EAB6"))
     let inactiveColor = self.dark ? Color(.white).opacity(0.3) : Color(.black).opacity(0.1)
+    let width1: CGFloat = 80
+    let width2: CGFloat = 160
+    let width3: CGFloat = 60
+    let heght: CGFloat = 5
 
     VStack {
       HStack{
-        ZStack(alignment: .leading){
           RoundedRectangle(cornerRadius: heght, style: .continuous)
             .frame(width: width1, height: heght)
-            .foregroundColor(step == 1 ? activitieColor : inactiveColor)
-        }
+            .foregroundColor(step >= 1 ? activitieColor : inactiveColor)
         
-        ZStack(alignment: .leading){
           RoundedRectangle(cornerRadius: heght, style: .continuous)
             .frame(width: width2, height: heght)
-            .foregroundColor(step == 2 ? activitieColor : inactiveColor)
-        }
+            .foregroundColor(step >= 2 ? activitieColor : inactiveColor)
         
-        ZStack(alignment: .leading){
           RoundedRectangle(cornerRadius: heght, style: .continuous)
             .frame(width: width3, height: heght)
-            .foregroundColor(step == 3 ? activitieColor : inactiveColor)
-        }
+            .foregroundColor(step >= 3 ? activitieColor : inactiveColor)
       }
     }
   }
@@ -86,6 +80,7 @@ struct ContetnView: View {
 }
 
 struct ContentNotification: View {
+  let context: ActivityViewContext<NotificationAttributes>
   var body: some View {
 
     VStack(alignment: .leading) {
@@ -97,7 +92,7 @@ struct ContentNotification: View {
           .cornerRadius(8)
         
         VStack(alignment: .leading){
-          Text("Burgão do Zé")
+          Text(context.attributes.restaurant)
             .font(.subheadline)
             .fontWeight(.bold)
             .foregroundColor(.black)
@@ -108,7 +103,7 @@ struct ContentNotification: View {
               .font(.subheadline)
               .fontWeight(.light)
               .foregroundColor(.gray)
-            Text("#1234")
+            Text(context.attributes.order)
               .font(.subheadline)
               .fontWeight(.bold)
               .foregroundColor(.gray)
@@ -116,14 +111,14 @@ struct ContentNotification: View {
         }
       }
       
-      Text("Estamos preparando o seu burgão.")
+      Text(context.attributes.status)
         .font(.subheadline)
         .fontWeight(.regular)
         .foregroundColor(.gray)
       
-      ProgressBar()
+      ProgressBar(step: context.attributes.step)
       
-      Text("Em até 30 minutos seu pedido sai para entrega.")
+      Text(context.attributes.description)
         .font(.caption)
         .fontWeight(.regular)
         .foregroundColor(Color(hue: 1.0, saturation: 0.0, brightness: 0.755))
@@ -155,39 +150,31 @@ struct ContentViewTrailing: View {
 }
 
 struct ContentViewExpandedLeading: View {
+  let context: ActivityViewContext<NotificationAttributes>
   var body: some View {
 
     VStack(alignment: .leading) {
-      Image("logoBurgao")
+      Image(context.attributes.imageStep)
         .resizable()
-        .frame( width: 40,height: 40)
-        .background(.white)
-        .cornerRadius(8)
+        .frame( width: 90,height: 65)
       
       
-      
-      HStack(alignment: .bottom) {
-        VStack(alignment: .leading) {
-          Text("Boas notícias!")
-            .font(.title3)
-            .fontWeight(.bold)
+      VStack(alignment: .leading) {
+        Text(context.attributes.stepMesage)
+          .font(.title3)
+          .fontWeight(.bold)
+          .foregroundColor(Color.white)
+        
+        Text(context.attributes.status)
+            .font(.subheadline)
+            .fontWeight(.medium)
             .foregroundColor(Color.white)
-          
-            Text("Já estou chegandoooo...")
-              .font(.subheadline)
-              .fontWeight(.medium)
-              .foregroundColor(Color.white)
-        }
-        .padding(.top, 4.0)
-          
-          Image("delivery")
-            .resizable()
-            .frame( width: 70,height: 50)
+        
+        ProgressBar(step: context.attributes.step, dark: true)
         }
       
-      ProgressBar()
     }
-    .padding(26)
+    .padding(.horizontal, 26)
     .frame(maxWidth: .infinity)
   }
 }
@@ -196,7 +183,7 @@ struct NotificationActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: NotificationAttributes.self) { context in
           VStack{
-            ContentNotification()
+            ContentNotification(context: context)
           }
           .activitySystemActionForegroundColor(.white)
                   .activityBackgroundTint(.white)
@@ -204,7 +191,7 @@ struct NotificationActivityWidget: Widget {
         } dynamicIsland: { context in
           DynamicIsland {
             DynamicIslandExpandedRegion(.leading, priority: 1){
-              ContentViewExpandedLeading()
+              ContentViewExpandedLeading(context: context)
             }
           }
             compactLeading: {
@@ -221,7 +208,7 @@ struct NotificationActivityWidget: Widget {
 }
 
 struct NotificationWidgetLiveActivityPreviews: PreviewProvider {
-  static let attributes = NotificationAttributes(title: "title")
+  static let attributes = NotificationAttributes(restaurant: "Burgão do Zé", order: "#423", status: "Estamos preparando o seu burgão.", description: "Em até 30 minutos seu pedido sai para entrega.", step: 3, stepMesage: "Boas notícias!", imageStep: "delivery")
     static let contentState = NotificationAttributes.ContentState(mesage: "Mesage")
 
     static var previews: some View {
