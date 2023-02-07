@@ -9,6 +9,29 @@ import WidgetKit
 import SwiftUI
 import ActivityKit
 
+func hexStringToUIColor (hex:String) -> UIColor {
+    var cString:String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+
+    if (cString.hasPrefix("#")) {
+        cString.remove(at: cString.startIndex)
+    }
+
+    if ((cString.count) != 6) {
+        return UIColor.gray
+    }
+
+    var rgbValue:UInt64 = 0
+    Scanner(string: cString).scanHexInt64(&rgbValue)
+
+    return UIColor(
+        red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
+        green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
+        blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
+        alpha: CGFloat(1.0)
+    )
+}
+
+
 @main
 struct NotificationWidgets: WidgetBundle {
     var body: some Widget {
@@ -18,71 +41,38 @@ struct NotificationWidgets: WidgetBundle {
     }
 }
 
+
 struct ProgressBar: View {
+  var step: CGFloat = 1
+  var dark: Bool = true
   var width1: CGFloat = 80
-  var width2: CGFloat = 180
+  var width2: CGFloat = 160
   var width3: CGFloat = 60
   var heght: CGFloat = 5
-  var percent1: CGFloat = 80
-  var percent2: CGFloat = 180
-  var percent3: CGFloat = 0
-  private var gradientColors = [
-    Color(.green),
-    Color(.black).opacity(0)
-  ]
   
-  private var gradientColorsCompleted = [
-    Color(.green),
-    Color(.green)
-  ]
 
   var body: some View {
-    let multiplier1 = width1 / 80
-    let multiplier2 = width2 / 180
-    let multiplier3 = width3 / 60
+    let activitieColor =  Color(hexStringToUIColor(hex: "#48EAB6"))
+    let inactiveColor = self.dark ? Color(.white).opacity(0.3) : Color(.black).opacity(0.1)
 
     VStack {
       HStack{
         ZStack(alignment: .leading){
           RoundedRectangle(cornerRadius: heght, style: .continuous)
             .frame(width: width1, height: heght)
-            .foregroundColor(Color.black.opacity(0.1))
-
-          RoundedRectangle(cornerRadius: heght)
-            .frame(width: percent1 * multiplier1, height: heght)
-            .background(LinearGradient(gradient: Gradient(colors: gradientColorsCompleted),
-              startPoint: UnitPoint.leading, endPoint: .trailing)
-              .clipShape(RoundedRectangle(cornerRadius: heght, style: .continuous))
-            )
-            .foregroundColor(.clear)
+            .foregroundColor(step == 1 ? activitieColor : inactiveColor)
         }
         
         ZStack(alignment: .leading){
           RoundedRectangle(cornerRadius: heght, style: .continuous)
             .frame(width: width2, height: heght)
-            .foregroundColor(Color.black.opacity(0.1))
-
-          RoundedRectangle(cornerRadius: heght)
-            .frame(width: percent2 * multiplier2, height: heght)
-            .background(LinearGradient(gradient: Gradient(colors: gradientColors),
-              startPoint: UnitPoint.leading, endPoint: .trailing)
-              .clipShape(RoundedRectangle(cornerRadius: heght, style: .continuous))
-            )
-            .foregroundColor(.clear)
+            .foregroundColor(step == 2 ? activitieColor : inactiveColor)
         }
         
         ZStack(alignment: .leading){
           RoundedRectangle(cornerRadius: heght, style: .continuous)
             .frame(width: width3, height: heght)
-            .foregroundColor(Color.black.opacity(0.1))
-
-          RoundedRectangle(cornerRadius: heght)
-            .frame(width: percent3 * multiplier3, height: heght)
-            .background(LinearGradient(gradient: Gradient(colors: gradientColors),
-              startPoint: UnitPoint.leading, endPoint: .trailing)
-              .clipShape(RoundedRectangle(cornerRadius: heght, style: .continuous))
-            )
-            .foregroundColor(.clear)
+            .foregroundColor(step == 3 ? activitieColor : inactiveColor)
         }
       }
     }
@@ -140,7 +130,6 @@ struct ContentNotification: View {
     }
     .frame(maxWidth: .infinity)
     .padding(16)
-    .background(.white)
   }
 }
 
@@ -165,32 +154,68 @@ struct ContentViewTrailing: View {
   }
 }
 
+struct ContentViewExpandedLeading: View {
+  var body: some View {
+
+    VStack(alignment: .leading) {
+      Image("logoBurgao")
+        .resizable()
+        .frame( width: 40,height: 40)
+        .background(.white)
+        .cornerRadius(8)
+      
+      
+      
+      HStack(alignment: .bottom) {
+        VStack(alignment: .leading) {
+          Text("Boas notícias!")
+            .font(.title3)
+            .fontWeight(.bold)
+            .foregroundColor(Color.white)
+          
+            Text("Já estou chegandoooo...")
+              .font(.subheadline)
+              .fontWeight(.medium)
+              .foregroundColor(Color.white)
+        }
+        .padding(.top, 4.0)
+          
+          Image("delivery")
+            .resizable()
+            .frame( width: 70,height: 50)
+        }
+      
+      ProgressBar()
+    }
+    .padding(26)
+    .frame(maxWidth: .infinity)
+  }
+}
+
 struct NotificationActivityWidget: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: NotificationAttributes.self) { context in
-          ContentNotification()
+          VStack{
+            ContentNotification()
+          }
+          .activitySystemActionForegroundColor(.white)
+                  .activityBackgroundTint(.white)
+                  .background(.white)
         } dynamicIsland: { context in
           DynamicIsland {
-            DynamicIslandExpandedRegion(.leading){
-              Text("Leading")
+            DynamicIslandExpandedRegion(.leading, priority: 1){
+              ContentViewExpandedLeading()
             }
-            DynamicIslandExpandedRegion(.trailing){
-              Text("Trailing")
-            }
-            DynamicIslandExpandedRegion(.center){
-              Text("Center")
-            }
-            DynamicIslandExpandedRegion(.bottom){
-              Text("Bottom")
-            }
-          } compactLeading: {
+          }
+            compactLeading: {
             ContentViewLeading()
           } compactTrailing: {
             ContentViewTrailing()
           } minimal: {
             ContentViewTrailing()
           }
-
+          .keylineTint(.white)
+          .contentMargins(.all, 0, for: .expanded)
         }
     }
 }
