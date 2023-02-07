@@ -20,28 +20,42 @@ function App(): JSX.Element {
             '#02564',
             'Estamos preparando seu pedido.',
             'Em até 30 minutos seu pedido sai para entrega',
-            2,
+            1,
             'Já pingou aqui!',
             'cooking',
           )
         }>
-        <Text style={styles.text}>Iniciar Live Activity</Text>
+        <Text style={styles.text}>Fazer pedido</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
         onPress={() => {
           setTimeout(() => {
-            LiveActivityModule.updateNotification();
+            LiveActivityModule.updateNotification(
+              'Já estamos levando o seu burgão.',
+              'Não se esqueça de nos avaliar.',
+              2,
+              'Estou chegandoooo!',
+              'delivery',
+            );
           }, 3000);
         }}>
-        <Text style={styles.text}>Atualizar Live Activity</Text>
+        <Text style={styles.text}>Sair para entrega</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         style={styles.button}
-        onPress={() => LiveActivityModule.cancelNotification()}>
-        <Text style={styles.text}>Encerrar Live Activity</Text>
+        onPress={() =>
+          LiveActivityModule.cancelNotification(
+            'Tudo pronto, agora é só aproveitar seu burgão',
+            'Não se esqueça de nos avaliar.',
+            3,
+            'Ufaaa... Chegueiii!',
+            'delivered',
+          )
+        }>
+        <Text style={styles.text}>Pedido entregue</Text>
       </TouchableOpacity>
     </SafeAreaView>
   );

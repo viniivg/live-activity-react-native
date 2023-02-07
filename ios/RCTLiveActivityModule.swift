@@ -13,8 +13,8 @@ class RCTLiveActivityModule: NSObject {
   
   @objc(startNotification:withOrder:withStatus:withDescription:withStep:withStepMesage:withImageStep:)
   func startNotification(_ restaurant: String, _ order: String, _ status: String, _ description: String, _ step: CGFloat, _ stepMesage: String, _ imageStep: String) {
-    let initialContentSate = NotificationAttributes.ContentState(mesage: "Hello Word startNotification!")
-    let activityAttributes = NotificationAttributes(restaurant: restaurant, order: order, status: status, description: description, step: step, stepMesage: stepMesage, imageStep: imageStep)
+    let initialContentSate = NotificationAttributes.ContentState(status: status, description: description, step: step, stepMesage: stepMesage, imageStep: imageStep)
+    let activityAttributes = NotificationAttributes(restaurant: restaurant, order: order)
 
     do {
       if #available(iOS 16.1, *){
@@ -27,9 +27,9 @@ class RCTLiveActivityModule: NSObject {
     }
   }
   
-  @objc
-  func updateNotification() {
-    let initialContentSate = NotificationAttributes.ContentState(mesage: "Hello Word updateNotification!")
+  @objc(updateNotification:withDescription:withStep:withStepMesage:withImageStep:)
+  func updateNotification(_ status: String, _ description: String, _ step: CGFloat, _ stepMesage: String, _ imageStep: String) {
+    let initialContentSate = NotificationAttributes.ContentState(status: status, description: description, step: step, stepMesage: stepMesage, imageStep: imageStep)
     if #available(iOS 16.1, *) {
       let alertConfiguration = AlertConfiguration(title: "Title Alert configuration", body: "body alert", sound: .default)
       Task{
@@ -43,9 +43,9 @@ class RCTLiveActivityModule: NSObject {
     
   }
   
-  @objc
-  func cancelNotification() {
-    let notificationStatus = NotificationAttributes.NotificationStatus(mesage: "Hello word cancelNotifiaction")
+  @objc(cancelNotification:withDescription:withStep:withStepMesage:withImageStep:)
+  func cancelNotification(_ status: String, _ description: String, _ step: CGFloat, _ stepMesage: String, _ imageStep: String) {
+    let notificationStatus = NotificationAttributes.NotificationStatus(status: status, description: description, step: step, stepMesage: stepMesage, imageStep: imageStep)
     
     if #available(iOS 16.1, *) {
       Task{

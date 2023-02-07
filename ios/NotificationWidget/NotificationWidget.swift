@@ -111,14 +111,14 @@ struct ContentNotification: View {
         }
       }
       
-      Text(context.attributes.status)
+      Text(context.state.status)
         .font(.subheadline)
         .fontWeight(.regular)
         .foregroundColor(.gray)
       
-      ProgressBar(step: context.attributes.step)
+      ProgressBar(step: context.state.step)
       
-      Text(context.attributes.description)
+      Text(context.state.description)
         .font(.caption)
         .fontWeight(.regular)
         .foregroundColor(Color(hue: 1.0, saturation: 0.0, brightness: 0.755))
@@ -154,23 +154,23 @@ struct ContentViewExpandedLeading: View {
   var body: some View {
 
     VStack(alignment: .leading) {
-      Image(context.attributes.imageStep)
+      Image(context.state.imageStep)
         .resizable()
         .frame( width: 90,height: 65)
       
       
       VStack(alignment: .leading) {
-        Text(context.attributes.stepMesage)
+        Text(context.state.stepMesage)
           .font(.title3)
           .fontWeight(.bold)
           .foregroundColor(Color.white)
         
-        Text(context.attributes.status)
+        Text(context.state.status)
             .font(.subheadline)
             .fontWeight(.medium)
             .foregroundColor(Color.white)
         
-        ProgressBar(step: context.attributes.step, dark: true)
+        ProgressBar(step: context.state.step, dark: true)
         }
       
     }
@@ -208,8 +208,8 @@ struct NotificationActivityWidget: Widget {
 }
 
 struct NotificationWidgetLiveActivityPreviews: PreviewProvider {
-  static let attributes = NotificationAttributes(restaurant: "Burgão do Zé", order: "#423", status: "Estamos preparando o seu burgão.", description: "Em até 30 minutos seu pedido sai para entrega.", step: 3, stepMesage: "Boas notícias!", imageStep: "delivery")
-    static let contentState = NotificationAttributes.ContentState(mesage: "Mesage")
+  static let attributes = NotificationAttributes(restaurant: "Burgão do Zé", order: "#423")
+    static let contentState = NotificationAttributes.ContentState(status: "Estamos preparando o seu burgão.", description: "Em até 30 minutos seu pedido sai para entrega.", step: 3, stepMesage: "Boas notícias!", imageStep: "delivery")
 
     static var previews: some View {
         attributes

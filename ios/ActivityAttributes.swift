@@ -12,13 +12,12 @@ struct NotificationAttributes: ActivityAttributes {
   public typealias NotificationStatus = ContentState
   
   public struct ContentState: Codable, Hashable {
-    var mesage: String
+    var status: String
+    var description: String
+    var step: CGFloat
+    var stepMesage: String
+    var imageStep: String
   }
   var restaurant: String
   var order: String
-  var status: String
-  var description: String
-  var step: CGFloat
-  var stepMesage: String
-  var imageStep: String
 }
